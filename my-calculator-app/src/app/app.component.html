@@ -1,2 +1,7 @@
 <h1>HESAP MAKİNESİ</h1>
 <app-calculator></app-calculator>
+<ul>
+  <li *ngFor="let item of history">
+    {{item.time}} - {{item.operation}} = {{item.result}}
+  </li>
+</ul>
