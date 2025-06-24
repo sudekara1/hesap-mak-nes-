@@ -1,0 +1,24 @@
+<div class="calculator">
+  <input type="text" class="display" [value]="display" disabled>
+  <div class="buttons">
+    <button class="button clear" (click)="clearDisplay()">AC</button> <button class="button" (click)="toggleSign()">+/-</button>
+    <button class="button" (click)="setOperator('%')">%</button> <button class="button operator" (click)="setOperator('/')">÷</button>
+
+    <button class="button" (click)="appendNumber('7')">7</button>
+    <button class="button" (click)="appendNumber('8')">8</button>
+    <button class="button" (click)="appendNumber('9')">9</button>
+    <button class="button operator" (click)="setOperator('*')">x</button>
+
+    <button class="button" (click)="appendNumber('4')">4</button>
+    <button class="button" (click)="appendNumber('5')">5</button>
+    <button class="button" (click)="appendNumber('6')">6</button>
+    <button class="button operator" (click)="setOperator('-')">-</button>
+
+    <button class="button" (click)="appendNumber('1')">1</button>
+    <button class="button" (click)="appendNumber('2')">2</button>
+    <button class="button" (click)="appendNumber('3')">3</button>
+    <button class="button operator plus-double-height" (click)="setOperator('+')">+</button>
+
+    <button class="button zero" (click)="appendNumber('0')">0</button>
+    <button class="button" (click)="addDecimal()">,</button> <button class="button equals equals-double-height" (click)="calculate()">=</button> </div>
+</div>

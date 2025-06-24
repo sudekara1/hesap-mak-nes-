@@ -1,0 +1,122 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex; 
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f2f5;
+}
+
+
+.calculator {
+  width: 320px; 
+  background-color: #ffffff; 
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.display {
+  width: 100%;
+  padding: 20px;
+  font-size: 2.8em;
+  text-align: right;
+  border: none;
+  background-color: #36454F;
+  color: #ffffff;
+  min-height: 80px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  box-sizing: border-box;
+  font-weight: 300;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background-color: #e0e0e0;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+
+.button {
+  padding: 20px;
+  font-size: 1.4em;
+  border: none;
+  background-color: #f9f9f9;
+  color: #333333;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease; 
+  font-weight: 500; 
+}
+
+.button:hover {
+  background-color: #f0f0f0; 
+  transform: translateY(-1px); 
+}
+
+.button:active {
+  transform: translateY(0);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1); 
+}
+
+.operator {
+  background-color: #ff9500; 
+  color: white;
+  font-weight: 600;
+}
+
+.operator:hover {
+  background-color: #e08500; 
+}
+
+
+.equals {
+  background-color: #7898bb;
+  color: white;
+  font-weight: 600;
+}
+
+.equals:hover {
+  background-color: #7898bb;
+}
+
+
+.zero {
+  grid-column: span 2;
+  text-align: left; 
+  padding-left: 35px; 
+}
+
+
+.clear {
+  background-color: #555555; 
+  color: white;
+  font-weight: 600;
+}
+
+.clear:hover {
+  background-color: #444444; 
+}
+
+
+.button:nth-child(20) {
+    background-color: #555555;
+    color: white;
+    font-weight: 600;
+}
+
+.button:nth-child(20):hover {
+    background-color: #444444;
+}
