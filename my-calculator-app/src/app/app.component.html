@@ -1,7 +1,16 @@
-<h1>HESAP MAKİNESİ</h1>
-<app-calculator></app-calculator>
-<ul>
-  <li *ngFor="let item of history">
-    {{item.time}} - {{item.operation}} = {{item.result}}
-  </li>
-</ul>
+<main>
+  <h1>Basit Hesap Makinesi</h1>
+
+  <app-calculator></app-calculator>
+
+  <hr>
+
+  <h2>İşlem Geçmişi</h2>
+  <button (click)="clearAllHistory()" class="clear-history-button">Geçmişi Temizle</button>
+  <ul class="history-list">
+    <li *ngFor="let item of history">
+      {{item.time}} - {{item.operation}} = {{item.result}}
+    </li>
+    <li *ngIf="history.length === 0" class="no-history-message">Geçmiş bulunamadı.</li>
+  </ul>
+</main>

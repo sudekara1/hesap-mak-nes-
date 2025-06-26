@@ -1,264 +1,141 @@
-// calculator/calculator.component.ts
-import { Component, HostListener } from '@angular/core';
-import { CommonModule } from '@angular/common'; // *ngIf ve *ngFor için gerekli
-import { FormsModule } from '@angular/forms'; // [(ngModel)] için gerekli
+import { Component, OnInit, HostListener } from '@angular/core'; 
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms'; 
+import { CalculateService } from '../services/calculate/calculate.service';
+import { HistoryService } from '../services/history/history.service';
+import { ButtonComponent } from '../shared/button/button.component';
 
 @Component({
   selector: 'app-calculator',
-  standalone: true, // Eğer standalone bir bileşen ise bu gerekli
-  imports: [CommonModule, FormsModule], // Gerekli modülleri buraya ekledik
+  standalone: true,
+  imports: [CommonModule, FormsModule, ButtonComponent], 
   templateUrl: './calculator.component.html',
-  styleUrls: ['./calculator.component.css']
+  styleUrl: './calculator.component.css'
 })
-export class CalculatorComponent {
-  display: string = '0';
-  currentInput: string = '';
-  operator: string | null = null;
-  firstOperand: number | null = null;
+export class CalculatorComponent implements OnInit { 
 
-  // 📌 İşlem geçmişi listesi
-  history: { operation: string, result: string, time: string }[] = [];
+  display: string = '0'; 
+  currentOperation: string = ''; 
+  lastResult: number | string = 0; 
 
-  constructor() { }
+  
+  constructor(
+    private calculateService: CalculateService,
+    private historyService: HistoryService
+  ) {}
 
-  // 📌 KLAVYE OLAYLARINI DİNLEME HostListener ile
+  ngOnInit(): void {
+  
+  }
+
+  
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    const key = event.key;
+    const key = event.key; 
 
-    if (!isNaN(Number(key))) { // Sayılar (0-9)
-      this.appendNumber(key);
-      event.preventDefault(); // Varsayılan tarayıcı davranışını engelle
-    } else if (key === '.' || key === ',') { // Ondalık nokta (hem nokta hem virgül kabul edilebilir)
-      this.addDecimal();
+    
+    if (/[0-9]/.test(key)) {
+      this.onButtonClick(key);
+      event.preventDefault(); 
+    }
+  
+    else if (['+', '-', '*', '/'].includes(key)) {
+      this.onOperatorClick(key);
       event.preventDefault();
-    } else if (['+', '-', '*', '/'].includes(key)) { // Operatörler (+, -, *, /)
-      this.setOperator(key);
+    }
+    
+    else if (key === '.') {
+      this.onButtonClick('.');
       event.preventDefault();
-    } else if (key === '%') { // Yüzde operatörü
-      this.setOperator('%');
-      event.preventDefault();
-    } else if (key === 'Enter' || key === '=') { // Eşittir tuşu
+    }
+   
+    else if (key === 'Enter') {
       this.calculate();
       event.preventDefault();
-    } else if (key === 'Backspace') { // Geri silme tuşu
-      this.deleteLastChar();
-      event.preventDefault();
-    } else if (key === 'Escape' || key.toLowerCase() === 'c') { // AC (All Clear) veya C tuşu
-      this.clearDisplay();
+    }
+  
+    else if (key === 'Escape' || key === 'Backspace') {
+      this.clear();
       event.preventDefault();
     }
-    // Diğer özel tuşlar için buraya if/else if ekleyebilirsiniz.
   }
 
-  appendNumber(num: string) {
-    if (this.display === 'Error') {
-      this.clearDisplay();
-    }
-
-    if (this.operator !== null && this.currentInput === '' && num !== '.') {
-        this.display = this.firstOperand?.toString() + ' ' + this.operator + ' ' + num;
-        this.currentInput = num;
-    } else if (this.currentInput === '0' && num !== '.') {
-        this.currentInput = num;
-        this.updateDisplay();
+ 
+  onButtonClick(value: string): void {
+  
+    if (this.display === '0' && value !== '.' || this.display === 'Error') {
+      this.display = value;
+      this.currentOperation = value;
     } else {
-        this.currentInput += num;
-        this.updateDisplay();
-    }
-  }
+      
+      const lastChar = this.currentOperation.slice(-1);
+      const isLastCharOperator = ['+', '-', '*', '/'].includes(lastChar);
+      const endsWithOperator = isLastCharOperator && this.currentOperation.length > 1;
 
-  setOperator(op: string) {
-    if (this.display === 'Error') {
-        this.clearDisplay();
-    }
-
-    if (this.currentInput === '' && this.firstOperand === null && this.display !== '0') {
-        this.firstOperand = parseFloat(this.display);
-        this.operator = op;
-        this.updateDisplay();
-        this.currentInput = '';
-        return;
-    }
-
-    if (this.currentInput === '' && this.firstOperand !== null) {
-      this.operator = op;
-      this.updateDisplay();
-      return;
-    }
-
-    if (this.firstOperand === null) {
-      this.firstOperand = parseFloat(this.currentInput);
-    } else if (this.operator) {
-      this.calculate();
-      this.firstOperand = parseFloat(this.display);
-    }
-
-    this.operator = op;
-    this.currentInput = '';
-    this.updateDisplay();
-  }
-
-  calculate() {
-    if (this.firstOperand === null || this.operator === null) {
-      if (this.currentInput !== '') {
-        this.display = this.currentInput;
-        this.resetCalculator();
-        return;
+      if (this.currentOperation === this.lastResult.toString() && !endsWithOperator) {
+         
+         this.display = value;
+         this.currentOperation = value;
+      } else {
+         this.display += value;
+         this.currentOperation += value;
       }
-      return;
-    }
-
-    const secondOperand = parseFloat(this.currentInput || this.display);
-    let result: number;
-    const operationText = `${this.firstOperand} ${this.operator} ${secondOperand}`;
-
-
-    switch (this.operator) {
-      case '+':
-        result = this.firstOperand + secondOperand;
-        break;
-      case '-':
-        result = this.firstOperand - secondOperand;
-        break;
-      case '*':
-        result = this.firstOperand * secondOperand;
-        break;
-      case '/':
-        if (secondOperand === 0) {
-          this.display = 'Error';
-          this.resetCalculator();
-          return;
-        }
-        result = this.firstOperand / secondOperand;
-        break;
-      case '%':
-        result = this.firstOperand * (secondOperand / 100);
-        break;
-      default:
-        this.display = 'Error';
-        this.resetCalculator();
-        return;
-    }
-
-    this.display = result.toString();
-    this.firstOperand = result;
-    this.operator = null;
-    this.currentInput = this.display;
-
-    const now = new Date();
-    const timeString = now.toLocaleTimeString('tr-TR') + ' - ' + now.toLocaleDateString('tr-TR');
-
-    this.history.unshift({
-      operation: operationText,
-      result: result.toString(),
-      time: timeString
-    });
-
-    if (this.history.length > 20) {
-      this.history.pop();
     }
   }
 
-  clearDisplay() {
+
+  clear(): void {
     this.display = '0';
-    this.currentInput = '';
-    this.operator = null;
-    this.firstOperand = null;
+    this.currentOperation = '';
+    this.lastResult = 0;
   }
 
-  deleteLastChar() {
-    if (this.display === 'Error') {
-      this.clearDisplay();
+
+  calculate(): void {
+    if (this.currentOperation === '') return;
+
+    try {
+      const result = this.calculateService.calculateResult(this.currentOperation);
+      this.lastResult = result;
+      this.display = result.toString();
+
+      
+      this.historyService.addHistoryItem({
+        time: new Date().toLocaleTimeString('tr-TR'),
+        operation: this.currentOperation,
+        result: result
+      });
+
+      this.currentOperation = result.toString(); 
+    } catch (e) {
+        this.display = 'Error';
+        this.currentOperation = '';
+        this.lastResult = 0;
+        console.error("Hesaplama hatası:", e);
+    }
+  }
+
+  
+  onOperatorClick(operator: string): void {
+   
+    if (this.display === '0' && operator === '.') {
+      this.display = '0.';
+      this.currentOperation = '0.';
       return;
     }
 
-    if (this.currentInput.length > 0) {
-      this.currentInput = this.currentInput.slice(0, -1);
-      if (this.currentInput === '') {
-        if (this.operator && this.firstOperand !== null) {
-          this.display = `${this.firstOperand} ${this.operator}`;
-        } else {
-          this.display = '0';
-        }
-      } else {
-        this.updateDisplay();
-      }
-    } else if (this.operator !== null) {
-      this.operator = null;
-      this.display = this.firstOperand?.toString() || '0';
-    } else if (this.firstOperand !== null) {
-      let tempFirstOperandStr = this.firstOperand.toString();
-      if (tempFirstOperandStr.length > 1) {
-        this.firstOperand = parseFloat(tempFirstOperandStr.slice(0, -1));
-        this.currentInput = this.firstOperand.toString();
-        this.display = this.firstOperand.toString();
-      } else {
-        this.clearDisplay();
-      }
+   
+    const lastChar = this.currentOperation.slice(-1);
+    const isLastCharOperator = ['+', '-', '*', '/'].includes(lastChar);
+
+    if (isLastCharOperator) {
+     
+      this.currentOperation = this.currentOperation.slice(0, -1) + operator;
+      this.display = this.currentOperation; 
     } else {
-      this.clearDisplay();
+      
+      this.currentOperation += operator;
+      this.display = this.currentOperation; 
     }
-  }
-
-  addDecimal() {
-    if (this.display === 'Error') {
-      this.clearDisplay();
-    }
-
-    if (!this.currentInput.includes('.')) {
-      if (this.currentInput === '') {
-        this.currentInput = '0.';
-      } else {
-        this.currentInput += '.';
-      }
-      this.updateDisplay();
-    }
-  }
-
-  toggleSign() {
-    if (this.display === 'Error') {
-      this.clearDisplay();
-      return;
-    }
-
-    if (this.currentInput !== '') {
-      const num = parseFloat(this.currentInput);
-      this.currentInput = (num * -1).toString();
-      this.updateDisplay();
-    } else if (this.firstOperand !== null && this.operator === null) {
-      this.firstOperand = this.firstOperand * -1;
-      this.display = this.firstOperand.toString();
-      this.currentInput = this.display;
-    }
-  }
-
-  private updateDisplay() {
-    if (this.firstOperand !== null && this.operator !== null && this.currentInput !== '') {
-      this.display = `${this.firstOperand} ${this.operator} ${this.currentInput}`;
-    } else if (this.firstOperand !== null && this.operator !== null) {
-      this.display = `${this.firstOperand} ${this.operator}`;
-    } else {
-      this.display = this.currentInput || '0';
-    }
-  }
-
-  private resetCalculator() {
-    this.currentInput = '';
-    this.operator = null;
-    this.firstOperand = null;
-  }
-
-  clearHistory() {
-    this.history = [];
-  }
-
-  trackByHistory(index: number, item: { operation: string, result: string, time: string }): string {
-    return item.time + item.operation + index;
-  }
-
-  // Yeni butonlar için alert fonksiyonu (eğer HTML'de kullanıyorsanız)
-  alert(message: string) {
-    window.alert(message);
   }
 }

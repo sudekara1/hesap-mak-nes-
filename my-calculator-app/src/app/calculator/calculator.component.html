@@ -1,56 +1,29 @@
-<!-- calculator/calculator.component.html -->
-<div class="calculator-wrapper">
-  <div class="calculator">
-    <input type="text" class="display" [value]="display" disabled>
-    <div class="buttons">
-      <button class="button clear" (click)="clearDisplay()">AC</button>
-      <button class="button" (click)="toggleSign()">+/-</button>
-      <button class="button" (click)="setOperator('%')">%</button>
-      <button class="button operator" (click)="setOperator('/')">÷</button>
+<div class="calculator-container">
+      <div class="display">{{ display }}</div>
 
-      <button class="button" (click)="appendNumber('7')">7</button>
-      <button class="button" (click)="appendNumber('8')">8</button>
-      <button class="button" (click)="appendNumber('9')">9</button>
-      <button class="button operator" (click)="setOperator('*')">x</button>
+      <div class="buttons-grid">
+        
+        <app-button variant="secondary" (btnClick)="onButtonClick('7')">7</app-button>
+        <app-button variant="secondary" (btnClick)="onButtonClick('8')">8</app-button>
+        <app-button variant="secondary" (btnClick)="onButtonClick('9')">9</app-button>
+        <app-button variant="operator" (btnClick)="onOperatorClick('/')">/</app-button>
 
-      <button class="button" (click)="appendNumber('4')">4</button>
-      <button class="button" (click)="appendNumber('5')">5</button>
-      <button class="button" (click)="appendNumber('6')">6</button>
-      <button class="button operator" (click)="setOperator('-')">-</button>
+        <app-button variant="secondary" (btnClick)="onButtonClick('4')">4</app-button>
+        <app-button variant="secondary" (btnClick)="onButtonClick('5')">5</app-button>
+        <app-button variant="secondary" (btnClick)="onButtonClick('6')">6</app-button>
+        <app-button variant="operator" (btnClick)="onOperatorClick('*')">*</app-button>
 
-      <button class="button" (click)="appendNumber('1')">1</button>
-      <button class="button" (click)="appendNumber('2')">2</button>
-      <button class="button" (click)="appendNumber('3')">3</button>
-      <!-- Plus butonu hala double-height -->
-      <button class="button operator plus-double-height" (click)="setOperator('+')">+</button>
+        <app-button variant="secondary" (btnClick)="onButtonClick('1')">1</app-button>
+        <app-button variant="secondary" (btnClick)="onButtonClick('2')">2</app-button>
+        <app-button variant="secondary" (btnClick)="onButtonClick('3')">3</app-button>
+        <app-button variant="operator" (btnClick)="onOperatorClick('-')">-</app-button>
 
-      <!-- 📌 Buradaki 0, virgül ve DEL butonları aynı satırda yer alır -->
-      <button class="button zero" (click)="appendNumber('0')">0</button>
-      <button class="button" (click)="addDecimal()">,</button>
-      <button class="button delete-button" (click)="deleteLastChar()">DEL</button> <!-- DEL butonu burada -->
+        <app-button variant="secondary" (btnClick)="onButtonClick('0')">0</app-button>
+        <app-button variant="secondary" (btnClick)="onButtonClick('.')">.</app-button>
+        <app-button variant="primary" (btnClick)="calculate()">=</app-button>
+        <app-button variant="operator" (btnClick)="onOperatorClick('+')">+</app-button>
 
-      <!-- 📌 YENİ EN ALT SATIR: Eşittir ve Yanındaki 3 Buton -->
-      <!-- Eşittir butonu artık sadece 1 sütun kaplar, double-height değil -->
-      <button class="button equals" (click)="calculate()">=</button>
+        <app-button variant="danger" class="full-width" (btnClick)="clear()">C</app-button>
+      </div>
     </div>
-  </div>
-
-  ---
-
-  <div class="history-container">
-    <h2>İşlem Geçmişi</h2>
-    <button (click)="clearHistory()" class="button clear-history-button" *ngIf="history.length > 0">Geçmişi Temizle</button>
-    <div *ngIf="history.length === 0" class="no-history-message">
-      Henüz bir işlem yapılmadı.
-    </div>
-    <ul class="history-list">
-      <li *ngFor="let item of history; trackBy: trackByHistory" class="history-item">
-        <div class="history-details">
-          <span class="history-expression">{{ item.operation }}</span>
-          <span class="history-result">= {{ item.result }}</span>
-        </div>
-        <span class="history-time">{{ item.time }}</span>
-      </li>
-    </ul>
-  </div>
-</div>
+    

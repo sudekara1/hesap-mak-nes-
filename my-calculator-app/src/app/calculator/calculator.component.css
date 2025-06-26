@@ -1,6 +1,4 @@
-/* calculator/calculator.component.css */
 
-/* Genel uygulama ve body/html stilleri */
 body, html {
   margin: 0;
   padding: 0;
@@ -9,13 +7,13 @@ body, html {
   background-color: #f0f2f5;
 }
 
-/* Uygulama genelini merkezleyecek ve içeriği dikeyde düzenleyecek kapsayıcı */
+
 .app-container {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Yatayda ortala */
+  align-items: center; 
   padding: 20px;
-  min-height: 100vh; /* Ekran yüksekliğini kapla */
+  min-height: 100vh; 
   box-sizing: border-box;
 }
 
@@ -27,18 +25,18 @@ body, html {
   text-align: center;
 }
 
-/* Hesap makinesi ve geçmişi içeren genel bir kapsayıcı */
+
 .calculator-wrapper {
   display: flex;
-  flex-direction: column; /* İçerikleri dikey hizala */
-  align-items: center; /* Ortala */
-  gap: 20px; /* Hesap makinesi ile geçmiş arasındaki boşluk */
-  padding: 20px; /* İç boşluk */
-  border-radius: 10px; /* Köşe yuvarlama */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Hafif gölge */
+  flex-direction: column; 
+  align-items: center; 
+  gap: 20px; 
+  padding: 20px;
+  border-radius: 10px; 
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-/* Mevcut .calculator stiliniz */
+
 .calculator {
   width: 320px;
   background-color: #ffffff;
@@ -50,7 +48,7 @@ body, html {
   flex-direction: column;
 }
 
-/* Mevcut .display stiliniz */
+
 .display {
   width: 100%;
   padding: 20px;
@@ -69,17 +67,16 @@ body, html {
   white-space: nowrap;
 }
 
-/* Mevcut .buttons stiliniz */
+
 .buttons {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 sütunlu grid yapısı korunuyor */
+  grid-template-columns: repeat(4, 1fr); 
   gap: 1px;
   background-color: #e0e0e0;
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
 }
 
-/* Mevcut .button stiliniz */
 .button {
   padding: 20px;
   font-size: 1.4em;
@@ -92,19 +89,18 @@ body, html {
   border-radius: 0;
 }
 
-/* Mevcut .button:hover stiliniz */
 .button:hover {
   background-color: #f0f0f0;
   transform: translateY(-1px);
 }
 
-/* Mevcut .button:active stiliniz */
+
 .button:active {
   transform: translateY(0);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Mevcut .operator stiliniz */
+
 .operator {
   background-color: #ff9500;
   color: white;
@@ -114,26 +110,25 @@ body, html {
   background-color: #e08500;
 }
 
-/* 📌 DÜZENLENDİ: Eşittir (=) butonu için sadece renk ve 1 sütun kaplama */
+
 .equals {
-  background-color: #007bff; /* Mavi renk */
+  background-color: #007bff; 
   color: white;
   font-weight: 600;
-  /* grid-column: span 2; kaldırıldı, artık 1 sütun kaplayacak */
-  /* equals-double-height sınıfı da HTML'den kaldırıldı */
+  
 }
 .equals:hover {
   background-color: #0056b3;
 }
 
-/* 📌 DÜZENLENDİ: Zero (0) butonu 2 sütun kaplamaya devam edecek */
+
 .zero {
-  grid-column: span 2; /* 2 sütun kaplaması için */
-  text-align: left; /* Sol hizada kalsın */
-  padding-left: 35px; /* Mevcut tasarımına göre boşluk */
+  grid-column: span 2; 
+  text-align: left; 
+  padding-left: 35px; 
 }
 
-/* Mevcut .clear stiliniz */
+
 .clear {
   background-color: #555555;
   color: white;
@@ -143,7 +138,7 @@ body, html {
   background-color: #444444;
 }
 
-/* Plus (+) butonu hala çift yükseklik */
+
 .plus-double-height {
   grid-row: span 2;
   display: flex;
@@ -151,9 +146,9 @@ body, html {
   justify-content: center;
 }
 
-/* 📌 YENİ: Delete (DEL) butonu için stil */
+
 .delete-button {
-  background-color: #ffc107; /* Sarı tonu */
+  background-color: #ffc107; 
   color: #333;
   font-weight: 600;
 }
@@ -161,9 +156,8 @@ body, html {
   background-color: #e0ae00;
 }
 
-/* 📌 YENİ: Yeni eklenen butonlar için genel stil */
 .new-button {
-  background-color: #9e9e9e; /* Gri tonu */
+  background-color: #9e9e9e; 
   color: white;
   font-weight: 600;
 }
@@ -171,15 +165,14 @@ body, html {
   background-color: #757575;
 }
 
-/* --- İşlem Geçmişi Stilleri --- */
 .history-container {
-  width: 100%; /* Kapsayıcı genişliğine yayıl */
-  max-width: 320px; /* Maksimum genişlik, hesap makinesiyle aynı */
-  background-color: #ffffff; /* Beyaz arka plan */
-  border: 1px solid #e0e0e0; /* Hafif kenarlık */
+  width: 100%; 
+  max-width: 320px; 
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0; 
   padding: 15px;
-  border-radius: 12px; /* Köşe yuvarlama */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hafif gölge */
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
   display: flex;
   flex-direction: column;
 }
@@ -198,7 +191,7 @@ body, html {
   width: 80%;
   margin: 10px auto;
   padding: 8px 15px;
-  background-color: #7898bb; /* Eşittir butonuyla aynı renk uyumu */
+  background-color: #7898bb; 
   color: white;
   border: none;
   border-radius: 5px;
@@ -209,7 +202,7 @@ body, html {
 }
 
 .clear-history-button:hover {
-  background-color: #6a88a8; /* Hover rengi koyulaşsın */
+  background-color: #6a88a8; 
 }
 
 .no-history-message {
@@ -225,12 +218,12 @@ body, html {
 .history-list {
   list-style-type: none;
   padding: 0;
-  max-height: 250px; /* Belirli bir yükseklikte tut ve scroll ekle */
-  overflow-y: auto; /* İçerik taşarsa kaydırma çubuğu göster */
+  max-height: 250px;
+  overflow-y: auto; 
   border: 1px solid #eee;
   border-radius: 5px;
   background-color: #fcfcfc;
-  flex-grow: 1; /* Kalan alanı doldurmasını sağlar */
+  flex-grow: 1; 
 }
 
 .history-item {
@@ -238,8 +231,8 @@ body, html {
   border-bottom: 1px dashed #f0f0f0;
   padding: 10px 12px;
   display: flex;
-  flex-direction: column; /* İçerileri dikey hizala */
-  align-items: flex-start; /* Sola hizala */
+  flex-direction: column; 
+  align-items: flex-start; 
   font-size: 0.9em;
   color: #555;
   line-height: 1.4;
@@ -275,3 +268,97 @@ body, html {
   color: #999;
   margin-top: 5px;
 }
+.calculator-container {
+      background-color: #333;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+      width: 300px;
+      margin: 30px auto;
+    }
+
+    .display {
+      background-color: #222;
+      color: #0f0;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 2.5em;
+      padding: 15px;
+      border-radius: 5px;
+      text-align: right;
+      margin-bottom: 20px;
+      overflow-x: auto; 
+      white-space: nowrap; 
+      min-height: 1.5em; 
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .buttons-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    
+    app-button button {
+      width: 100%; 
+      height: 60px; 
+      font-size: 1.2em;
+      border-radius: 8px; 
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+
+    
+    app-button .btn-operator {
+      background-color: #f7923b; 
+      color: #fff;
+    }
+    app-button .btn-operator:hover {
+      background-color: #e0822c;
+    }
+
+    app-button .btn-primary {
+      background-color: #007bff; 
+      color: #fff;
+    }
+    app-button .btn-primary:hover {
+      background-color: #0056b3;
+    }
+
+    app-button .btn-secondary {
+      background-color: #6c757d;
+      color: #fff;
+    }
+    app-button .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+
+    app-button .btn-danger {
+      background-color: #dc3545; 
+      color: #fff;
+    }
+    app-button .btn-danger:hover {
+      background-color: #bd2130;
+    }
+
+    app-button.full-width {
+      grid-column: span 4; 
+    }
+
+  
+    @media (max-width: 400px) {
+      .calculator-container {
+        width: 100%;
+        margin: 15px auto;
+        padding: 10px;
+      }
+      app-button button {
+        height: 50px;
+        font-size: 1.1em;
+      }
+      .display {
+        font-size: 2em;
+      }
+    }
+    
