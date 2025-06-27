@@ -8,6 +8,174 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
+  <input type="text" id="display" readonly>
+<div id="messageBox" style="display:none;"></div>
+
   <app-root></app-root>
+  <script>
+// DOMContentLoaded olayı, HTML tamamen yüklendiğinde ve ayrıştırıldığında tetiklenir.
+    // Bu, JavaScript'in HTML elementlerine güvenle erişebileceği anlamına gelir.
+    document.addEventListener('DOMContentLoaded', () => {
+        const display = document.getElementById('display');
+        const buttons = document.querySelectorAll('.calculator-button');
+        const messageBox = document.getElementById('messageBox');
+
+        let currentInput = '0';
+        let previousInput = '';
+        let operator = null;
+        let waitingForSecondOperand = false;
+
+        function showMessage(message, type = 'warning') {
+            messageBox.textContent = message;
+            messageBox.className = 'message-box';
+            if (type === 'error') {
+                messageBox.classList.add('bg-red-100', 'border-red-400', 'text-red-700');
+            } else if (type === 'success') {
+                messageBox.classList.add('bg-green-100', 'border-green-400', 'text-green-700');
+            } else if (type === 'info') {
+                messageBox.classList.add('bg-blue-100', 'border-blue-400', 'text-blue-700');
+            } else {
+                messageBox.classList.add('bg-yellow-100', 'border-yellow-400', 'text-yellow-700');
+            }
+            messageBox.style.display = 'block';
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, 3000);
+        }
+
+        function clearDisplay() {
+            currentInput = '0';
+            previousInput = '';
+            operator = null;
+            waitingForSecondOperand = false;
+            display.value = '0';
+            showMessage('Ekran temizlendi.', 'success');
+            console.log("Hesap makinesi temizlendi.");
+        }
+
+        function appendNumber(number) {
+            if (waitingForSecondOperand) {
+                currentInput = number;
+                waitingForSecondOperand = false;
+            } else {
+                if (number === '.' && currentInput.includes('.')) {
+                    showMessage("Zaten bir ondalık nokta var.", 'warning');
+                    return;
+                }
+                currentInput = currentInput === '0' && number !== '.' ? number : currentInput + number;
+            }
+            display.value = currentInput;
+            console.log(`Sayı girildi: ${number}, Mevcut Giriş: ${currentInput}`);
+        }
+
+        function chooseOperator(nextOperator) {
+            if (operator && waitingForSecondOperand) {
+                operator = nextOperator;
+                showMessage(`İşlem ${nextOperator} olarak değiştirildi.`, 'info');
+                console.log(`Operatör değiştirildi: ${nextOperator}`);
+                return;
+            }
+
+            if (currentInput === '') {
+                showMessage('Önce bir sayı girin.', 'warning');
+                return;
+            }
+
+            if (previousInput !== '') {
+                calculateResult();
+            }
+
+            previousInput = currentInput;
+            operator = nextOperator;
+            waitingForSecondOperand = true;
+            showMessage(`İşlem ${operator} seçildi.`, 'info');
+            console.log(`Operatör seçildi: ${operator}, İlk Sayı: ${previousInput}`);
+        }
+
+        async function calculateResult() {
+            if (!previousInput || !operator || !currentInput) {
+                showMessage('Hesaplama için yeterli değer yok. İki sayı ve bir işlem girin.', 'warning');
+                console.warn("Hesaplama yapılamadı: Eksik değerler.");
+                return;
+            }
+
+            const sayi1 = parseFloat(previousInput);
+            const sayi2 = parseFloat(currentInput);
+            const islem = operator;
+
+            if (isNaN(sayi1) || isNaN(sayi2)) {
+                showMessage("Geçersiz sayı girişi. Lütfen sayısal değerler girin.", "error");
+                console.error("Geçersiz sayı girişi: ", { previousInput, currentInput });
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:4200/calculate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ sayi1, sayi2, islem })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    currentInput = String(data.result);
+                    display.value = currentInput;
+                    previousInput = '';
+                    operator = null;
+                    waitingForSecondOperand = false;
+                    showMessage(`Sonuç: ${data.result}`, 'success');
+                    console.log("API'den gelen sonuç:", data.result);
+                } else {
+                    const errorMessage = data.error || 'Bilinmeyen bir hata oluştu.';
+                    showMessage(`Hata: ${errorMessage}`, 'error');
+                    console.error("API hatası:", errorMessage, "HTTP Durumu:", response.status);
+                    currentInput = '0';
+                    display.value = currentInput;
+                    previousInput = '';
+                    operator = null;
+                    waitingForSecondOperand = false;
+                }
+            } catch (error) {
+                showMessage(`Bağlantı hatası: ${error.message}. Arka uç (backend) çalışıyor mu?`, 'error');
+                console.error('API çağrısında yakalanan hata (ağ/bağlantı):', error);
+                currentInput = '0';
+                display.value = currentInput;
+                previousInput = '';
+                operator = null;
+                waitingForSecondOperand = false;
+            }
+        }
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const value = button.dataset.value;
+
+                if (value === 'C') {
+                    clearDisplay();
+                } else if (['+', '-', '*', '/'].includes(value)) {
+                    chooseOperator(value);
+                } else if (value === '=') {
+                    calculateResult();
+                } else if (value === '.') { // Nokta düğmesi için özel kontrol
+                    appendNumber(value);
+                }
+                else {
+                    appendNumber(value);
+                }
+            });
+        });
+
+        // Sayfa yüklendiğinde başlangıç durumunu ayarla
+        display.value = currentInput;
+        showMessage('Hesap makinesi hazır!', 'info');
+        console.log("Frontend JavaScript yüklendi ve çalışıyor.");
+        console.log("Lütfen 'app.js' arka ucunun http://localhost:3000 adresinde çalıştığından emin olun.");
+    }); // DOMContentLoaded event listener'ın sonu
+
+
+  </script>
 </body>
 </html>

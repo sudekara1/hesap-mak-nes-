@@ -1,4 +1,3 @@
-// src/app/app.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CalculatorComponent } from './calculator/calculator.component';
@@ -25,6 +24,7 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Geçmiş aboneliği
     this.historyService.history$.subscribe(newHistory => {
       this.history = newHistory;
     });
@@ -42,7 +42,7 @@ export class AppComponent implements OnInit {
     const result = this.calculateService.calculateResult(this.displayValue);
 
     if (typeof result === 'string') {
-      this.displayValue = result; // Hata mesajı: "Geçersiz İfade" vs.
+      this.displayValue = result;
       return;
     }
 
@@ -55,5 +55,10 @@ export class AppComponent implements OnInit {
 
     this.historyService.addHistoryItem(historyItem);
     this.displayValue = result.toString();
+  }
+
+  /** ✅ Eksik olan clear fonksiyonu eklendi */
+  clearAllHistory(): void {
+    this.historyService.clearHistory(); // Eğer bu fonksiyon servis içinde varsa
   }
 }

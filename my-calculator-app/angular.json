@@ -83,6 +83,10 @@
             ],
             "styles": [
               "src/styles.css"
+            ],
+            
+            "scripts": [
+              "src/script.js" 
             ]
           }
         }

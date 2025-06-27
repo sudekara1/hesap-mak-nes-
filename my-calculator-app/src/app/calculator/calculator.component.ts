@@ -10,7 +10,7 @@ import { ButtonComponent } from '../shared/button/button.component';
   standalone: true,
   imports: [CommonModule, FormsModule, ButtonComponent], 
   templateUrl: './calculator.component.html',
-  styleUrl: './calculator.component.css'
+  styleUrls: ['./calculator.component.css']
 })
 export class CalculatorComponent implements OnInit { 
 
